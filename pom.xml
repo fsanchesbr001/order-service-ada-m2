@@ -9,8 +9,8 @@
     <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
@@ -106,7 +106,7 @@
                         <param>com.fabriciosanches.domain.*</param>
                     </targetClasses>
                     <targetTests>
-                        <param>com.fabriciosanchez.domain.*</param>
+                        <param>com.fabriciosanches.domain.*</param>
                     </targetTests>
                     <mutationThreshold>75</mutationThreshold>
                     <coverageThreshold>80</coverageThreshold>
