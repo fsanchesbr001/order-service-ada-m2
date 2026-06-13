@@ -11,10 +11,10 @@
 - [x] **Testes de Unidade (JUnit 5 + Mockito):** Desenvolver testes para a classe de domínio `Order` isolando todas as dependências por meio de mocks das portas.
 - [x] Validar JaCoCo (mínimo 80%) e PITest (mínimo 75% de mutação) no escopo de domínio.
 
-## [ ] Fase 2: Segurança (JWT) e Adaptadores de Entrada (Inbound Adapters)
-- [ ] Configurar o Spring Security Resource Server para validar tokens JWT e aplicar restrições de escopo por endpoint.
-- [ ] Criar o `GlobalExceptionHandler` configurando respostas padronizadas via **RFC 7807** para tratar acessos negados e erros de negócio.
-- [ ] Criar os controladores REST (`OrderController`, `PaymentController`) injetando as interfaces de casos de uso (Inversão de Dependência - DIP).
+## [x] Fase 2: Segurança (JWT) e Adaptadores de Entrada (Inbound Adapters)
+- [x] Configurar o Spring Security Resource Server para validar tokens JWT e aplicar restrições de escopo por endpoint.
+- [x] Criar o `GlobalExceptionHandler` configurando respostas padronizadas via **RFC 7807** para tratar acessos negados e erros de negócio.
+- [x] Criar os controladores REST (`OrderController`, `PaymentController`) injetando as interfaces de casos de uso (Inversão de Dependência - DIP).
 
 ## [ ] Fase 3: Adaptadores de Saída (Outbound Adapters) e Persistência
 - [ ] Criar scripts de migração do **Flyway** estruturando as tabelas no MySQL.
@@ -30,4 +30,3 @@
 - [ ] Criar a Action do GitHub em `.github/workflows/ci.yml`.
 - [ ] Configurar a execução do build, testes unitários, testes de integração e o PITest.
 - [ ] Configurar a etapa do **Trivy** para escanear a imagem Docker final e bloquear falhas críticas antes da conclusão da esteira.
-
