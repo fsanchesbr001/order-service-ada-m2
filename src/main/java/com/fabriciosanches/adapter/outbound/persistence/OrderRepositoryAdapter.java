@@ -7,6 +7,7 @@ import com.fabriciosanches.domain.model.Order;
 import com.fabriciosanches.domain.model.OrderItem;
 import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     }
 
     @Override
+    @Transactional
     public Order save(Order order) {
         OrderJpaEntity entity = toEntity(order);
         OrderJpaEntity saved = jpaRepository.save(entity);
@@ -28,6 +30,7 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Order> findById(String id) {
         return jpaRepository.findById(id).map(this::toDomain);
     }
