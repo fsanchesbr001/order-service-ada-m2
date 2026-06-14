@@ -6,7 +6,7 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -15,7 +15,7 @@
         <spring-boot.version>3.3.1</spring-boot.version>
         <jacoco.version>0.8.11</jacoco.version>
         <pitest.version>1.15.3</pitest.version>
-        <pitest-junit5.version>1.2.1</pitest-junit5.version>
+        <pitest-junit5.version>1.2.3</pitest-junit5.version>
         <resilience4j.version>2.2.0</resilience4j.version>
         <flyway.version>10.15.0</flyway.version>
     </properties>
