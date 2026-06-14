@@ -16,10 +16,10 @@
 - [x] Criar o `GlobalExceptionHandler` configurando respostas padronizadas via **RFC 7807** para tratar acessos negados e erros de negócio.
 - [x] Criar os controladores REST (`OrderController`, `PaymentController`) injetando as interfaces de casos de uso (Inversão de Dependência - DIP).
 
-## [ ] Fase 3: Adaptadores de Saída (Outbound Adapters) e Persistência
-- [ ] Criar scripts de migração do **Flyway** estruturando as tabelas no MySQL.
-- [ ] Implementar `OrderRepositoryAdapter` utilizando o Spring Data JPA subjacente, mapeando o controle de concorrência com `@Version`.
-- [ ] Implementar os adaptadores HTTP de clientes usando Feign/WebClient protegidos por Circuit Breakers do Resilience4j para consumir o WireMock.
+## [x] Fase 3: Adaptadores de Saída (Outbound Adapters) e Persistência
+- [x] Criar scripts de migração do **Flyway** estruturando as tabelas no MySQL.
+- [x] Implementar `OrderRepositoryAdapter` utilizando o Spring Data JPA subjacente, mapeando o controle de concorrência com `@Version`.
+- [x] Implementar os adaptadores HTTP de clientes usando Feign/WebClient protegidos por Circuit Breakers do Resilience4j para consumir o WireMock.
 
 ## [ ] Fase 4: Infraestrutura de Execução e Integração
 - [ ] Configurar os arquivos JSON do WireMock mapeando as respostas de cliente e catálogo.
