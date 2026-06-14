@@ -28,6 +28,10 @@ public class SecurityConfig {
                                             AuthenticationEntryPoint authenticationEntryPoint,
                                             AccessDeniedHandler accessDeniedHandler) throws Exception {
         return http
+                // CSRF disabled intentionally: this is a stateless REST API that authenticates
+                // exclusively via JWT ****** (Authorization header). CSRF attacks rely on
+                // the browser automatically sending session cookies, which this API does not use.
+                // See Spring Security docs: "When to use CSRF protection" — stateless APIs are exempt.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize

@@ -93,7 +93,7 @@ services:
     restart: unless-stopped
 
   # ───────────────────────────────────────────────────────────────────────────
-  # Grafana — Metrics visualisation
+  # Grafana — Metrics visualization
   # ───────────────────────────────────────────────────────────────────────────
   grafana:
     image: grafana/grafana:10.4.2
