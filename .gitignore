@@ -40,8 +40,11 @@ build/
 
 ### GIT ###
 .github/
+!.github/
+.github/*
+!.github/workflows/
+!.github/workflows/**
 
 ### Local env files ###
 .env
 .env.local
-
