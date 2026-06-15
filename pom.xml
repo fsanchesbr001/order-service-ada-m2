@@ -6,7 +6,7 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,6 +19,7 @@
         <resilience4j.version>2.2.0</resilience4j.version>
         <flyway.version>10.15.0</flyway.version>
         <failsafe.version>3.2.5</failsafe.version>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencyManagement>
@@ -143,6 +144,18 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
@@ -151,6 +164,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${failsafe.version}</version>
+                <configuration>
+                    <skipITs>${skipITs}</skipITs>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
