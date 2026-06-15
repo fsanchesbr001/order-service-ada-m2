@@ -28,6 +28,11 @@ public class SecurityConfig {
                                             AuthenticationEntryPoint authenticationEntryPoint,
                                             AccessDeniedHandler accessDeniedHandler) throws Exception {
         return http
+                // CSRF disabled intentionally: this is a stateless REST API that authenticates
+                // exclusively via JWT ****** (Authorization header). CSRF attacks rely on
+                // the browser automatically sending session cookies, which this API does not use.
+                // See Spring Security docs: "When to use CSRF protection" — stateless APIs are exempt.
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/orders/**").hasAuthority("SCOPE_orders:write")
@@ -44,6 +49,9 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder(@Value("${security.jwt.secret}") String secret) {
+        if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("security.jwt.secret must be at least 32 bytes for HS256");
+        }
         SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(key)
                 .macAlgorithm(MacAlgorithm.HS256)

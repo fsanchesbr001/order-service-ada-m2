@@ -21,10 +21,10 @@
 - [x] Implementar `OrderRepositoryAdapter` utilizando o Spring Data JPA subjacente, mapeando o controle de concorrência com `@Version`.
 - [x] Implementar os adaptadores HTTP de clientes usando Feign/WebClient protegidos por Circuit Breakers do Resilience4j para consumir o WireMock.
 
-## [ ] Fase 4: Infraestrutura de Execução e Integração
-- [ ] Configurar os arquivos JSON do WireMock mapeando as respostas de cliente e catálogo.
-- [ ] Configurar os testes de integração Spring Boot com **Testcontainers** subindo MySQL e WireMock de forma isolada.
-- [ ] Criar o `Dockerfile` multi-stage para Java 21 e o arquivo `docker-compose.yml`.
+## [x] Fase 4: Infraestrutura de Execução e Integração
+- [x] Configurar os arquivos JSON do WireMock mapeando as respostas de cliente e catálogo.
+- [x] Configurar os testes de integração Spring Boot com **Testcontainers** subindo MySQL e WireMock de forma isolada.
+- [x] Criar o `Dockerfile` multi-stage para Java 21 e o arquivo `docker-compose.yml`.
 
 ## [ ] Fase 5: Pipeline CI/CD e Segurança estática
 - [ ] Criar a Action do GitHub em `.github/workflows/ci.yml`.
