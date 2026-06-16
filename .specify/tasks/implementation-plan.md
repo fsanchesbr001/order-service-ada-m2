@@ -26,7 +26,7 @@
 - [x] Configurar os testes de integração Spring Boot com **Testcontainers** subindo MySQL e WireMock de forma isolada.
 - [x] Criar o `Dockerfile` multi-stage para Java 21 e o arquivo `docker-compose.yml`.
 
-## [ ] Fase 5: Pipeline CI/CD e Segurança estática
-- [ ] Criar a Action do GitHub em `.github/workflows/ci.yml`.
-- [ ] Configurar a execução do build, testes unitários, testes de integração e o PITest.
-- [ ] Configurar a etapa do **Trivy** para escanear a imagem Docker final e bloquear falhas críticas antes da conclusão da esteira.
+## [x] Fase 5: Pipeline CI/CD e Segurança estática
+- [x] Criar a Action do GitHub em `.github/workflows/ci.yml`.
+- [x] Configurar a execução do build, testes unitários, testes de integração e o PITest.
+- [x] Configurar a etapa do **Trivy** para escanear a imagem Docker final e bloquear falhas críticas antes da conclusão da esteira.

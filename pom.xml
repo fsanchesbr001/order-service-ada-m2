@@ -6,13 +6,15 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.3.1</spring-boot.version>
+        <spring-boot.version>3.3.13</spring-boot.version>
+        <!-- Explicit override: Tomcat 10.1.55 fixes critical CVEs not yet in Spring Boot 3.3.13 BOM -->
+        <tomcat.version>10.1.55</tomcat.version>
         <jacoco.version>0.8.11</jacoco.version>
         <pitest.version>1.15.3</pitest.version>
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
