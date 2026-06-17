@@ -44,6 +44,26 @@ services:
       - ./observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
     networks:
       - order-net
+    depends_on:
+      - tempo
+    restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Tempo — Trace storage and query API
+  # ───────────────────────────────────────────────────────────────────────────
+  tempo:
+    image: grafana/tempo:2.6.1
+    container_name: tempo
+    user: "0:0"
+    command: ["-config.file=/etc/tempo/config.yaml"]
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo/config.yaml:ro
+      - tempo-data:/tmp/tempo
+    networks:
+      - order-net
     restart: unless-stopped
 
   # ───────────────────────────────────────────────────────────────────────────
@@ -125,10 +145,12 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
     networks:
       - order-net
     depends_on:
       - prometheus
+      - tempo
     restart: unless-stopped
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -138,6 +160,7 @@ volumes:
   mysql-data:
   prometheus-data:
   grafana-data:
+  tempo-data:
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Networks

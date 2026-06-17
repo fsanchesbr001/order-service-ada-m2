@@ -10,6 +10,10 @@ processors:
     timeout: 5s
 
 exporters:
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
   debug:
     verbosity: detailed
 
@@ -23,5 +27,5 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [otlp, debug]
 
