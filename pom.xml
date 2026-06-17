@@ -6,7 +6,7 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -181,6 +181,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
@@ -210,6 +211,10 @@
                 <version>${failsafe.version}</version>
                 <configuration>
                     <skipITs>${skipITs}</skipITs>
+                    <!-- Add target/classes to classpath for Spring Boot integration tests -->
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
                 <executions>
                     <execution>

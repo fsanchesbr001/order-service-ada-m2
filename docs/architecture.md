@@ -35,31 +35,7 @@ O **Order Service** é o único serviço implementado nesta plataforma de e-comm
 
 A plataforma de e-commerce foi decomposta nos seguintes Bounded Contexts. O `order-service` implementa o contexto central:
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                  ORDER CONTEXT (implementado)              │
-│                                                            │
-│  ┌─────────────┐   ┌─────────────┐   ┌─────────────────┐  │
-│  │   Domain    │   │ Application │   │ Infrastructure  │  │
-│  │  (Core)     │──▶│ (Use Cases) │──▶│  (Adapters)     │  │
-│  └─────────────┘   └─────────────┘   └─────────────────┘  │
-└────────────────────────────────────────────────────────────┘
-         ▲                  ▲                    │
-         │ (porta de saída) │ (porta de entrada) │ HTTP
-         │                  │                    ▼
-   ┌─────────────┐   ┌─────────────┐   ┌─────────────────┐
-   │  CUSTOMER   │   │  CATALOG    │   │    PAYMENT      │
-   │  CONTEXT    │   │  CONTEXT    │   │  GATEWAY CTX    │
-   │ (WireMock)  │   │ (WireMock)  │   │  (WireMock)     │
-   └─────────────┘   └─────────────┘   └─────────────────┘
-                                               │
-                                               ▼
-                                      ┌─────────────────┐
-                                      │  NOTIFICATION   │
-                                      │    CONTEXT      │
-                                      │  (WireMock)     │
-                                      └─────────────────┘
-```
+![img.png](img.png)
 
 ### Contextos e Responsabilidades
 
