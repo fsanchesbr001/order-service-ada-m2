@@ -1,6 +1,8 @@
 package com.fabriciosanches.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.FilterChain;
@@ -15,14 +17,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     private static final int REQUESTS_PER_MINUTE = 60;
 
-    private final ConcurrentHashMap<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .build();
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -36,7 +41,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         String clientKey = resolveClientKey(request);
-        Bucket bucket = buckets.computeIfAbsent(clientKey, this::newBucket);
+        Bucket bucket = buckets.get(clientKey, k -> newBucket());
 
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
@@ -62,7 +67,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         return request.getRemoteAddr();
     }
 
-    private Bucket newBucket(String key) {
+    private Bucket newBucket() {
         Bandwidth limit = Bandwidth.builder()
                 .capacity(REQUESTS_PER_MINUTE)
                 .refillGreedy(REQUESTS_PER_MINUTE, Duration.ofMinutes(1))

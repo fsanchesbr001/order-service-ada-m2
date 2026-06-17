@@ -43,11 +43,11 @@ public class ProcessPaymentCallbackUseCase implements ProcessPaymentCallbackUseC
         }
         String normalizedStatus = command.callbackStatus().toUpperCase();
         if ("APPROVED".equals(normalizedStatus)) {
-            payment.approve();
-            Payment saved = paymentRepository.save(payment);
             Order order = orderRepository.findById(payment.getOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Pedido não encontrado. orderId=" + payment.getOrderId()));
+            payment.approve();
+            Payment saved = paymentRepository.save(payment);
             notificationClient.notifyOrderApproved(order.getId(), order.getCustomerId());
             return new ProcessPaymentCallbackResult(saved.getId(), saved.getStatus().name());
         } else if ("REJECTED".equals(normalizedStatus)) {
