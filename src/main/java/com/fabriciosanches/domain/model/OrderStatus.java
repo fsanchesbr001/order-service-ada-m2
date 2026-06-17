@@ -19,6 +19,11 @@ public enum OrderStatus {
         public boolean canApplyPaymentFailure() {
             return false;
         }
+
+        @Override
+        public boolean canCancel() {
+            return true;
+        }
     },
 
     CONFIRMADO {
@@ -34,6 +39,11 @@ public enum OrderStatus {
 
         @Override
         public boolean canApplyPaymentFailure() {
+            return true;
+        }
+
+        @Override
+        public boolean canCancel() {
             return true;
         }
     },
@@ -53,6 +63,11 @@ public enum OrderStatus {
         public boolean canApplyPaymentFailure() {
             return false;
         }
+
+        @Override
+        public boolean canCancel() {
+            return false;
+        }
     };
 
     public abstract boolean canAddItems();
@@ -60,6 +75,8 @@ public enum OrderStatus {
     public abstract boolean canConfirm();
 
     public abstract boolean canApplyPaymentFailure();
+
+    public abstract boolean canCancel();
 
     public OrderStatus transitionTo(OrderStatus next) {
         if (next == CONFIRMADO && !this.canConfirm()) {

@@ -73,6 +73,27 @@ public class Order {
         this.status = OrderStatus.CONFIRMADO;
     }
 
+    public void removeItem(String productId) {
+        Objects.requireNonNull(productId, "productId não pode ser nulo");
+        if (!status.canAddItems()) {
+            throw new DomainException(
+                    String.format("Não é possível remover itens de um pedido com status '%s'.", status));
+        }
+        boolean removed = items.removeIf(item -> item.getProductId().equals(productId));
+        if (!removed) {
+            throw new DomainException(
+                    String.format("Item com productId '%s' não encontrado no pedido.", productId));
+        }
+    }
+
+    public void cancel() {
+        if (!status.canCancel()) {
+            throw new DomainException(
+                    String.format("Não é possível cancelar um pedido com status '%s'.", status));
+        }
+        this.status = OrderStatus.CANCELADO;
+    }
+
     public void applyPaymentFailure() {
         if (!status.canApplyPaymentFailure()) {
             throw new DomainException(
