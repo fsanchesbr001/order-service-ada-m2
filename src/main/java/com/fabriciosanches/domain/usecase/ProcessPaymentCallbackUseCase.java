@@ -7,6 +7,7 @@ import com.fabriciosanches.domain.model.Payment;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCallbackCommand;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCallbackResult;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCallbackUseCasePort;
+import com.fabriciosanches.domain.port.output.NotificationClientPort;
 import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
 import com.fabriciosanches.domain.port.output.PaymentRepositoryPort;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,14 @@ public class ProcessPaymentCallbackUseCase implements ProcessPaymentCallbackUseC
 
     private final PaymentRepositoryPort paymentRepository;
     private final OrderRepositoryPort orderRepository;
+    private final NotificationClientPort notificationClient;
 
     public ProcessPaymentCallbackUseCase(PaymentRepositoryPort paymentRepository,
-                                         OrderRepositoryPort orderRepository) {
+                                         OrderRepositoryPort orderRepository,
+                                         NotificationClientPort notificationClient) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
+        this.notificationClient = notificationClient;
     }
 
     @Override
@@ -39,7 +43,13 @@ public class ProcessPaymentCallbackUseCase implements ProcessPaymentCallbackUseC
         }
         String normalizedStatus = command.callbackStatus().toUpperCase();
         if ("APPROVED".equals(normalizedStatus)) {
+            Order order = orderRepository.findById(payment.getOrderId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Pedido não encontrado. orderId=" + payment.getOrderId()));
             payment.approve();
+            Payment saved = paymentRepository.save(payment);
+            notificationClient.notifyOrderApproved(order.getId(), order.getCustomerId());
+            return new ProcessPaymentCallbackResult(saved.getId(), saved.getStatus().name());
         } else if ("REJECTED".equals(normalizedStatus)) {
             payment.reject();
             Order order = orderRepository.findById(payment.getOrderId())

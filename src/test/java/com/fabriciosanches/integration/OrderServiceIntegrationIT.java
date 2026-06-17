@@ -40,6 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @Testcontainers(disabledWithoutDocker = true)
 @ActiveProfiles("integration")
 @DisplayName("Order Service - Testes de Integração")
+/*
+ * NOTE: This integration test requires Docker to be installed and running.
+ * It will be automatically skipped if Docker is not available.
+ * To run: mvn clean verify -DskipITs=false
+ * To skip: mvn clean test
+ */
 class OrderServiceIntegrationIT {
 
     private static final String JWT_SECRET = "integration-test-secret-hs256-key-1";

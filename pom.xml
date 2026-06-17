@@ -6,7 +6,7 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -117,6 +117,32 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        <!-- Distributed Tracing: Micrometer Tracing + OpenTelemetry bridge -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <!-- JSON structured logging via Logstash Logback Encoder -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+        </dependency>
+        <!-- Rate Limiting: Bucket4j -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.10.1</version>
+        </dependency>
+        <!-- Caffeine cache — used by RateLimitingFilter for bounded bucket storage -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
 
         <!-- OpenAPI / Swagger UI -->
         <dependency>
@@ -155,6 +181,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
@@ -184,6 +211,10 @@
                 <version>${failsafe.version}</version>
                 <configuration>
                     <skipITs>${skipITs}</skipITs>
+                    <!-- Add target/classes to classpath for Spring Boot integration tests -->
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
                 <executions>
                     <execution>
