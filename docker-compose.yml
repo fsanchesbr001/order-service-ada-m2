@@ -18,14 +18,33 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-orderpass}
       CUSTOMER_SERVICE_URL: http://wiremock:8080
       CATALOG_SERVICE_URL: http://wiremock:8080
+      # Send traces to the local OpenTelemetry Collector instead of localhost:4318.
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
     depends_on:
       mysql:
         condition: service_healthy
       wiremock:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     networks:
       - order-net
     restart: on-failure
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # OpenTelemetry Collector — Local tracing sink
+  # ───────────────────────────────────────────────────────────────────────────
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.111.0
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    ports:
+      - "4318:4318"
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    networks:
+      - order-net
+    restart: unless-stopped
 
   # ───────────────────────────────────────────────────────────────────────────
   # MySQL
