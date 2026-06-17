@@ -12,5 +12,6 @@ O objetivo deste projeto é entregar uma funcionalidade como meio de avaliação
 - **Versão 1.0.2 (14-06-2026):** Fase 03 Implementada.
 - **Versão 1.0.5 (15-06-2026):** Fase 04 Implementada.
 - **Versão 1.0.6 (16-06-2026):** Fase 05 Implementada e testes de requisitos. 
+- **Versão 1.0.7 (17-06-2026):** Correção de bugs e fluxos.
 
 
