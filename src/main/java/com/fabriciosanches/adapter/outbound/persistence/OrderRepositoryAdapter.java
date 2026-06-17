@@ -35,6 +35,14 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
         return jpaRepository.findById(id).map(this::toDomain);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> findByCustomerId(String customerId) {
+        return jpaRepository.findByCustomerId(customerId).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
     private OrderJpaEntity toEntity(Order order) {
         OrderJpaEntity entity = new OrderJpaEntity(
                 order.getId(),

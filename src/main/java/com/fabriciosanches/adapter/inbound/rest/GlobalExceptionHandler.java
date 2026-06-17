@@ -1,6 +1,7 @@
 package com.fabriciosanches.adapter.inbound.rest;
 
 import com.fabriciosanches.domain.exception.DomainException;
+import com.fabriciosanches.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -33,6 +34,16 @@ public class GlobalExceptionHandler {
         return problem(
                 HttpStatus.FORBIDDEN,
                 "Forbidden",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    ProblemDetail handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
+        return problem(
+                HttpStatus.NOT_FOUND,
+                "Resource Not Found",
                 ex.getMessage(),
                 request.getRequestURI()
         );

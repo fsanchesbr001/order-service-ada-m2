@@ -1,22 +1,32 @@
 package com.fabriciosanches.domain.usecase;
 
 import com.fabriciosanches.domain.exception.DomainException;
+import com.fabriciosanches.domain.model.Order;
 import com.fabriciosanches.domain.port.input.CreateOrderCommand;
 import com.fabriciosanches.domain.port.input.CreateOrderResult;
+import com.fabriciosanches.domain.port.output.CustomerClientPort;
+import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @DisplayName("CreateOrderUseCase - Testes de Unidade")
 class CreateOrderUseCaseTest {
 
+    private OrderRepositoryPort orderRepository;
+    private CustomerClientPort customerClient;
     private CreateOrderUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new CreateOrderUseCase();
+        orderRepository = mock(OrderRepositoryPort.class);
+        customerClient = mock(CustomerClientPort.class);
+        when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+        useCase = new CreateOrderUseCase(orderRepository, customerClient);
     }
 
     @Test
@@ -27,6 +37,8 @@ class CreateOrderUseCaseTest {
         assertNotNull(result);
         assertNotNull(result.orderId());
         assertFalse(result.orderId().isBlank());
+        verify(customerClient).validateCustomer("customer-001");
+        verify(orderRepository).save(any(Order.class));
     }
 
     @Test

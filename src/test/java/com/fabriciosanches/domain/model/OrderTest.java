@@ -174,6 +174,93 @@ class OrderTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // removeItem
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("removeItem()")
+    class RemoveItemTests {
+
+        @Test
+        @DisplayName("Deve remover item existente de pedido PENDENTE")
+        void shouldRemoveExistingItemFromPendingOrder() {
+            Order order = new Order(CUSTOMER_ID);
+            order.addItem(buildItem(1, "10.00"));
+
+            order.removeItem(PRODUCT_ID);
+
+            assertTrue(order.getItems().isEmpty());
+        }
+
+        @Test
+        @DisplayName("Deve lançar DomainException ao remover item de pedido CONFIRMADO")
+        void shouldThrowWhenRemovingItemFromConfirmedOrder() {
+            Order order = new Order(CUSTOMER_ID);
+            order.addItem(buildItem(1, "10.00"));
+            order.confirmOrder();
+
+            assertThrows(DomainException.class, () -> order.removeItem(PRODUCT_ID));
+        }
+
+        @Test
+        @DisplayName("Deve lançar DomainException ao remover item inexistente")
+        void shouldThrowWhenItemNotFound() {
+            Order order = new Order(CUSTOMER_ID);
+            order.addItem(buildItem(1, "10.00"));
+
+            assertThrows(DomainException.class, () -> order.removeItem("non-existent-product"));
+        }
+
+        @Test
+        @DisplayName("Deve lançar NullPointerException ao remover com productId nulo")
+        void shouldThrowWhenProductIdIsNull() {
+            Order order = new Order(CUSTOMER_ID);
+
+            assertThrows(NullPointerException.class, () -> order.removeItem(null));
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // cancel
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("cancel()")
+    class CancelTests {
+
+        @Test
+        @DisplayName("Deve cancelar pedido PENDENTE")
+        void shouldCancelPendingOrder() {
+            Order order = new Order(CUSTOMER_ID);
+
+            order.cancel();
+
+            assertEquals(OrderStatus.CANCELADO, order.getStatus());
+        }
+
+        @Test
+        @DisplayName("Deve cancelar pedido CONFIRMADO")
+        void shouldCancelConfirmedOrder() {
+            Order order = new Order(CUSTOMER_ID);
+            order.addItem(buildItem(1, "10.00"));
+            order.confirmOrder();
+
+            order.cancel();
+
+            assertEquals(OrderStatus.CANCELADO, order.getStatus());
+        }
+
+        @Test
+        @DisplayName("Deve lançar DomainException ao cancelar pedido já CANCELADO")
+        void shouldThrowWhenCancellingAlreadyCancelledOrder() {
+            Order order = new Order(CUSTOMER_ID);
+            order.cancel();
+
+            assertThrows(DomainException.class, order::cancel);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // applyPaymentFailure
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -368,6 +455,24 @@ class OrderTest {
             assertFalse(OrderStatus.CANCELADO.canAddItems());
             assertFalse(OrderStatus.CANCELADO.canConfirm());
             assertFalse(OrderStatus.CANCELADO.canApplyPaymentFailure());
+        }
+
+        @Test
+        @DisplayName("PENDENTE pode cancelar")
+        void pendenteShouldBeAbleToCancel() {
+            assertTrue(OrderStatus.PENDENTE.canCancel());
+        }
+
+        @Test
+        @DisplayName("CONFIRMADO pode cancelar")
+        void confirmadoShouldBeAbleToCancel() {
+            assertTrue(OrderStatus.CONFIRMADO.canCancel());
+        }
+
+        @Test
+        @DisplayName("CANCELADO não pode cancelar novamente")
+        void canceladoShouldNotBeAbleToCancel() {
+            assertFalse(OrderStatus.CANCELADO.canCancel());
         }
 
         @Test
