@@ -7,6 +7,7 @@ import com.fabriciosanches.domain.port.input.ProcessPaymentCommand;
 import com.fabriciosanches.domain.port.input.ProcessPaymentResult;
 import com.fabriciosanches.domain.port.input.ProcessPaymentUseCasePort;
 import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
+import com.fabriciosanches.domain.port.output.PaymentGatewayClientPort;
 import com.fabriciosanches.domain.port.output.PaymentRepositoryPort;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,14 @@ public class ProcessPaymentUseCase implements ProcessPaymentUseCasePort {
 
     private final OrderRepositoryPort orderRepository;
     private final PaymentRepositoryPort paymentRepository;
+    private final PaymentGatewayClientPort paymentGatewayClient;
 
-    public ProcessPaymentUseCase(OrderRepositoryPort orderRepository, PaymentRepositoryPort paymentRepository) {
+    public ProcessPaymentUseCase(OrderRepositoryPort orderRepository,
+                                 PaymentRepositoryPort paymentRepository,
+                                 PaymentGatewayClientPort paymentGatewayClient) {
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
+        this.paymentGatewayClient = paymentGatewayClient;
     }
 
     @Override
@@ -35,6 +40,7 @@ public class ProcessPaymentUseCase implements ProcessPaymentUseCasePort {
             throw new DomainException(
                     String.format("Não é possível processar pagamento de um pedido com status '%s'.", order.getStatus()));
         }
+        paymentGatewayClient.charge(command.orderId(), order.getTotalAmount(), command.paymentMethod());
         Payment payment = new Payment(command.orderId(), command.paymentMethod());
         Payment saved = paymentRepository.save(payment);
         return new ProcessPaymentResult(saved.getId(), saved.getStatus().name());

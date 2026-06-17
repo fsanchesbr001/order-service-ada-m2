@@ -8,6 +8,7 @@ import com.fabriciosanches.domain.model.Payment;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCommand;
 import com.fabriciosanches.domain.port.input.ProcessPaymentResult;
 import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
+import com.fabriciosanches.domain.port.output.PaymentGatewayClientPort;
 import com.fabriciosanches.domain.port.output.PaymentRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @DisplayName("ProcessPaymentUseCase - Testes de Unidade")
@@ -26,22 +28,25 @@ class ProcessPaymentUseCaseTest {
 
     private OrderRepositoryPort orderRepository;
     private PaymentRepositoryPort paymentRepository;
+    private PaymentGatewayClientPort paymentGatewayClient;
     private ProcessPaymentUseCase useCase;
 
     @BeforeEach
     void setUp() {
         orderRepository = mock(OrderRepositoryPort.class);
         paymentRepository = mock(PaymentRepositoryPort.class);
+        paymentGatewayClient = mock(PaymentGatewayClientPort.class);
         when(paymentRepository.save(any(Payment.class))).thenAnswer(inv -> inv.getArgument(0));
-        useCase = new ProcessPaymentUseCase(orderRepository, paymentRepository);
+        when(paymentGatewayClient.charge(any(), any(), any()))
+                .thenReturn(new PaymentGatewayClientPort.PaymentGatewayResult("txn-001", "APPROVED"));
+        useCase = new ProcessPaymentUseCase(orderRepository, paymentRepository, paymentGatewayClient);
     }
 
     private Order confirmedOrder(String orderId) {
-        Order order = new Order(orderId, "customer-001",
+        return new Order(orderId, "customer-001",
                 java.time.Instant.now(),
                 List.of(new OrderItem("p1", "Produto", 1, new BigDecimal("10.00"))),
                 OrderStatus.CONFIRMADO, 0, new BigDecimal("10.00"));
-        return order;
     }
 
     @Test
@@ -55,6 +60,7 @@ class ProcessPaymentUseCaseTest {
         assertNotNull(result.paymentId());
         assertFalse(result.paymentId().isBlank());
         assertNotNull(result.status());
+        verify(paymentGatewayClient).charge(eq("order-001"), any(), eq("pix"));
         verify(paymentRepository).save(any(Payment.class));
     }
 
@@ -128,5 +134,17 @@ class ProcessPaymentUseCaseTest {
 
         assertThrows(DomainException.class,
                 () -> useCase.execute(new ProcessPaymentCommand("order-003", "pix")));
+    }
+
+    @Test
+    @DisplayName("Deve lançar DomainException quando o gateway de pagamento rejeita a cobrança")
+    void shouldThrowWhenPaymentGatewayFails() {
+        when(orderRepository.findById("order-001")).thenReturn(Optional.of(confirmedOrder("order-001")));
+        when(paymentGatewayClient.charge(any(), any(), any()))
+                .thenThrow(new DomainException("Gateway de pagamento indisponível."));
+
+        assertThrows(DomainException.class,
+                () -> useCase.execute(new ProcessPaymentCommand("order-001", "pix")));
+        verify(paymentRepository, never()).save(any());
     }
 }

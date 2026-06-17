@@ -8,6 +8,7 @@ import com.fabriciosanches.domain.model.Payment;
 import com.fabriciosanches.domain.model.PaymentStatus;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCallbackCommand;
 import com.fabriciosanches.domain.port.input.ProcessPaymentCallbackResult;
+import com.fabriciosanches.domain.port.output.NotificationClientPort;
 import com.fabriciosanches.domain.port.output.OrderRepositoryPort;
 import com.fabriciosanches.domain.port.output.PaymentRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,15 +29,17 @@ class ProcessPaymentCallbackUseCaseTest {
 
     private PaymentRepositoryPort paymentRepository;
     private OrderRepositoryPort orderRepository;
+    private NotificationClientPort notificationClient;
     private ProcessPaymentCallbackUseCase useCase;
 
     @BeforeEach
     void setUp() {
         paymentRepository = mock(PaymentRepositoryPort.class);
         orderRepository = mock(OrderRepositoryPort.class);
+        notificationClient = mock(NotificationClientPort.class);
         when(paymentRepository.save(any(Payment.class))).thenAnswer(inv -> inv.getArgument(0));
         when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
-        useCase = new ProcessPaymentCallbackUseCase(paymentRepository, orderRepository);
+        useCase = new ProcessPaymentCallbackUseCase(paymentRepository, orderRepository, notificationClient);
     }
 
     private Payment processingPayment() {
@@ -44,10 +47,16 @@ class ProcessPaymentCallbackUseCaseTest {
                 PaymentStatus.PROCESSING, Instant.now());
     }
 
+    private Order confirmedOrder() {
+        return new Order("order-001", "customer-001", Instant.now(),
+                List.of(), OrderStatus.CONFIRMADO, 0, BigDecimal.TEN);
+    }
+
     @Test
     @DisplayName("Deve aprovar pagamento com callback APPROVED")
     void shouldApprovePaymentOnApprovedCallback() {
         when(paymentRepository.findById("pay-001")).thenReturn(Optional.of(processingPayment()));
+        when(orderRepository.findById("order-001")).thenReturn(Optional.of(confirmedOrder()));
 
         ProcessPaymentCallbackResult result = useCase.execute(
                 new ProcessPaymentCallbackCommand("pay-001", "APPROVED"));
@@ -56,7 +65,7 @@ class ProcessPaymentCallbackUseCaseTest {
         assertEquals("pay-001", result.paymentId());
         assertEquals("APPROVED", result.status());
         verify(paymentRepository).save(any(Payment.class));
-        verify(orderRepository, never()).save(any());
+        verify(notificationClient).notifyOrderApproved("order-001", "customer-001");
     }
 
     @Test
@@ -74,12 +83,14 @@ class ProcessPaymentCallbackUseCaseTest {
         assertEquals("REJECTED", result.status());
         verify(paymentRepository).save(any(Payment.class));
         verify(orderRepository).save(any(Order.class));
+        verify(notificationClient, never()).notifyOrderApproved(any(), any());
     }
 
     @Test
     @DisplayName("Deve aceitar callback com status em minúsculas (case-insensitive)")
     void shouldAcceptLowercaseCallbackStatus() {
         when(paymentRepository.findById("pay-001")).thenReturn(Optional.of(processingPayment()));
+        when(orderRepository.findById("order-001")).thenReturn(Optional.of(confirmedOrder()));
 
         ProcessPaymentCallbackResult result = useCase.execute(
                 new ProcessPaymentCallbackCommand("pay-001", "approved"));
