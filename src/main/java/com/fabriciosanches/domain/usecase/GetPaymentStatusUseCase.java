@@ -21,7 +21,7 @@ public class GetPaymentStatusUseCase implements GetPaymentStatusUseCasePort {
     @Override
     public GetPaymentStatusResult execute(GetPaymentStatusCommand command) {
         if (command == null || command.paymentId() == null || command.paymentId().isBlank()) {
-            throw new DomainException("paymentId nao pode ser vazio");
+            throw new DomainException("paymentId não pode ser vazio");
         }
         Payment payment = paymentRepository.findById(command.paymentId())
                 .orElseThrow(() -> new ResourceNotFoundException(

@@ -24,14 +24,14 @@ public class ProcessPaymentUseCase implements ProcessPaymentUseCasePort {
     @Override
     public ProcessPaymentResult execute(ProcessPaymentCommand command) {
         if (command == null || command.orderId() == null || command.orderId().isBlank()) {
-            throw new DomainException("orderId nao pode ser vazio");
+            throw new DomainException("orderId não pode ser vazio");
         }
         if (command.paymentMethod() == null || command.paymentMethod().isBlank()) {
-            throw new DomainException("paymentMethod nao pode ser vazio");
+            throw new DomainException("paymentMethod não pode ser vazio");
         }
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new DomainException("Pedido não encontrado. orderId=" + command.orderId()));
-        if (!order.getStatus().canApplyPaymentFailure() && order.getStatus().canConfirm()) {
+        if (!order.getStatus().canApplyPaymentFailure()) {
             throw new DomainException(
                     String.format("Não é possível processar pagamento de um pedido com status '%s'.", order.getStatus()));
         }

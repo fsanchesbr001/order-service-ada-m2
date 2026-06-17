@@ -27,13 +27,13 @@ public class AddItemToOrderUseCase implements AddItemToOrderUseCasePort {
     @Override
     public GetOrderByIdResult execute(AddItemToOrderCommand command) {
         if (command == null || command.orderId() == null || command.orderId().isBlank()) {
-            throw new DomainException("orderId nao pode ser vazio");
+            throw new DomainException("orderId não pode ser vazio");
         }
         if (command.productId() == null || command.productId().isBlank()) {
-            throw new DomainException("productId nao pode ser vazio");
+            throw new DomainException("productId não pode ser vazio");
         }
         if (command.productName() == null || command.productName().isBlank()) {
-            throw new DomainException("productName nao pode ser vazio");
+            throw new DomainException("productName não pode ser vazio");
         }
         if (command.quantity() <= 0) {
             throw new DomainException("quantity deve ser maior que zero");

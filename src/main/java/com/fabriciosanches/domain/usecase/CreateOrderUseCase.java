@@ -23,7 +23,7 @@ public class CreateOrderUseCase implements CreateOrderUseCasePort {
     @Override
     public CreateOrderResult execute(CreateOrderCommand command) {
         if (command == null || command.customerId() == null || command.customerId().isBlank()) {
-            throw new DomainException("customerId nao pode ser vazio");
+            throw new DomainException("customerId não pode ser vazio");
         }
         customerClient.validateCustomer(command.customerId());
         Order order = new Order(command.customerId());

@@ -21,7 +21,7 @@ public class CancelOrderUseCase implements CancelOrderUseCasePort {
     @Override
     public void execute(CancelOrderCommand command) {
         if (command == null || command.orderId() == null || command.orderId().isBlank()) {
-            throw new DomainException("orderId nao pode ser vazio");
+            throw new DomainException("orderId não pode ser vazio");
         }
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new ResourceNotFoundException(

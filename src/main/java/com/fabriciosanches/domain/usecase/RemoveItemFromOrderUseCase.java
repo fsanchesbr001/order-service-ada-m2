@@ -20,10 +20,10 @@ public class RemoveItemFromOrderUseCase implements RemoveItemFromOrderUseCasePor
     @Override
     public void execute(RemoveItemFromOrderCommand command) {
         if (command == null || command.orderId() == null || command.orderId().isBlank()) {
-            throw new DomainException("orderId nao pode ser vazio");
+            throw new DomainException("orderId não pode ser vazio");
         }
         if (command.productId() == null || command.productId().isBlank()) {
-            throw new DomainException("productId nao pode ser vazio");
+            throw new DomainException("productId não pode ser vazio");
         }
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new ResourceNotFoundException(

@@ -22,7 +22,7 @@ public class ConfirmOrderUseCase implements ConfirmOrderUseCasePort {
     @Override
     public GetOrderByIdResult execute(ConfirmOrderCommand command) {
         if (command == null || command.orderId() == null || command.orderId().isBlank()) {
-            throw new DomainException("orderId nao pode ser vazio");
+            throw new DomainException("orderId não pode ser vazio");
         }
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new ResourceNotFoundException(

@@ -26,10 +26,10 @@ public class ProcessPaymentCallbackUseCase implements ProcessPaymentCallbackUseC
     @Override
     public ProcessPaymentCallbackResult execute(ProcessPaymentCallbackCommand command) {
         if (command == null || command.paymentId() == null || command.paymentId().isBlank()) {
-            throw new DomainException("paymentId nao pode ser vazio");
+            throw new DomainException("paymentId não pode ser vazio");
         }
         if (command.callbackStatus() == null || command.callbackStatus().isBlank()) {
-            throw new DomainException("callbackStatus nao pode ser vazio");
+            throw new DomainException("callbackStatus não pode ser vazio");
         }
         Payment payment = paymentRepository.findById(command.paymentId())
                 .orElseThrow(() -> new ResourceNotFoundException(

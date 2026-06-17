@@ -107,4 +107,26 @@ class ProcessPaymentUseCaseTest {
 
         assertNotEquals(first.paymentId(), second.paymentId());
     }
+
+    @Test
+    @DisplayName("Deve lançar DomainException quando o pedido está PENDENTE")
+    void shouldThrowWhenOrderIsPending() {
+        Order pendingOrder = new Order("order-002", "customer-001",
+                java.time.Instant.now(), List.of(), OrderStatus.PENDENTE, 0, BigDecimal.ZERO);
+        when(orderRepository.findById("order-002")).thenReturn(Optional.of(pendingOrder));
+
+        assertThrows(DomainException.class,
+                () -> useCase.execute(new ProcessPaymentCommand("order-002", "pix")));
+    }
+
+    @Test
+    @DisplayName("Deve lançar DomainException quando o pedido está CANCELADO")
+    void shouldThrowWhenOrderIsCancelled() {
+        Order cancelledOrder = new Order("order-003", "customer-001",
+                java.time.Instant.now(), List.of(), OrderStatus.CANCELADO, 0, BigDecimal.ZERO);
+        when(orderRepository.findById("order-003")).thenReturn(Optional.of(cancelledOrder));
+
+        assertThrows(DomainException.class,
+                () -> useCase.execute(new ProcessPaymentCommand("order-003", "pix")));
+    }
 }

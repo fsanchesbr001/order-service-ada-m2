@@ -23,7 +23,7 @@ public class ListOrdersByCustomerUseCase implements ListOrdersByCustomerUseCaseP
     @Override
     public ListOrdersByCustomerResult execute(ListOrdersByCustomerCommand command) {
         if (command == null || command.customerId() == null || command.customerId().isBlank()) {
-            throw new DomainException("customerId nao pode ser vazio");
+            throw new DomainException("customerId não pode ser vazio");
         }
         List<Order> orders = orderRepository.findByCustomerId(command.customerId());
         List<GetOrderByIdResult> results = orders.stream()
