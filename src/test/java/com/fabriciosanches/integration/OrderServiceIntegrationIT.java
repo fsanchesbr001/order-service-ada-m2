@@ -220,6 +220,7 @@ class OrderServiceIntegrationIT {
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject("test-user")
+                    .issuer("order-service")
                     .issueTime(new Date())
                     .expirationTime(new Date(System.currentTimeMillis() + 3_600_000L))
                     .claim("scope", String.join(" ", scopes))

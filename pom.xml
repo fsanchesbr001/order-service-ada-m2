@@ -6,7 +6,7 @@
 
     <groupId>com.fabriciosanches</groupId>
     <artifactId>order-service-ada-m2</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.12</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -293,6 +293,22 @@
                         <outputFormat>XML</outputFormat>
                     </outputFormats>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>jwt-generator</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.fabriciosanches.util.JwtTokenGenerator</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

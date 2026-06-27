@@ -24,7 +24,10 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     @Override
     @Transactional
     public Order save(Order order) {
-        OrderJpaEntity entity = toEntity(order);
+        Long existingVersion = jpaRepository.findById(order.getId())
+                .map(OrderJpaEntity::getVersion)
+                .orElse(null);
+        OrderJpaEntity entity = toEntity(order, existingVersion);
         OrderJpaEntity saved = jpaRepository.save(entity);
         return toDomain(saved);
     }
@@ -43,14 +46,15 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
                 .toList();
     }
 
-    private OrderJpaEntity toEntity(Order order) {
+    private OrderJpaEntity toEntity(Order order, Long version) {
         OrderJpaEntity entity = new OrderJpaEntity(
                 order.getId(),
                 order.getCustomerId(),
                 order.getStatus(),
                 order.getTotalAmount(),
                 order.getPaymentFailureCount(),
-                order.getCreatedAt()
+                order.getCreatedAt(),
+                version
         );
         order.getItems().stream()
                 .map(item -> new OrderItemJpaEntity(
