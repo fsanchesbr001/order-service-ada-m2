@@ -55,12 +55,18 @@ public class OrderJpaEntity {
 
     public OrderJpaEntity(String id, String customerId, OrderStatus status,
                           BigDecimal totalAmount, int paymentFailureCount, Instant createdAt) {
+        this(id, customerId, status, totalAmount, paymentFailureCount, createdAt, null);
+    }
+
+    public OrderJpaEntity(String id, String customerId, OrderStatus status,
+                          BigDecimal totalAmount, int paymentFailureCount, Instant createdAt, Long version) {
         this.id = id;
         this.customerId = customerId;
         this.status = status;
         this.totalAmount = totalAmount;
         this.paymentFailureCount = paymentFailureCount;
         this.createdAt = createdAt;
+        this.version = version;
     }
 
     public String getId() {
