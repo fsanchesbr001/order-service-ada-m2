@@ -9,3 +9,15 @@ scrape_configs:
       - targets: ['order-service:8090']
         labels:
           application: 'order-service'
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+        labels:
+          application: 'prometheus'
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          application: 'docker-containers'

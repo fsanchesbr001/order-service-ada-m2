@@ -108,6 +108,40 @@ docker compose ps
 - **403 Forbidden**: token sem escopo necessário.
 - **422 Gateway temporariamente indisponível**: faltam `PAYMENT_GATEWAY_URL` e/ou `NOTIFICATION_SERVICE_URL` apontando para o WireMock.
 
+## 📊 Guia de Monitoramento (Grafana + Prometheus)
+
+### O que já está configurado neste projeto
+- `spring-boot-starter-actuator` + `micrometer-registry-prometheus`
+- endpoint de métricas: `http://localhost:<porta-management>/actuator/prometheus`
+- Prometheus coletando:
+  - métricas da aplicação (`job=order-service`)
+  - métricas do próprio Prometheus (`job=prometheus`)
+  - métricas de containers via cAdvisor (`job=cadvisor`)
+- Grafana com datasource provisionado e dashboard provisionado automaticamente.
+
+### Como subir observabilidade
+```powershell
+docker compose up -d --build order-service prometheus cadvisor grafana
+```
+
+### URLs
+- Grafana: `http://localhost:3000`
+- Prometheus: `http://localhost:9090`
+- cAdvisor: `http://localhost:8085`
+
+### Dashboard pronto no Grafana
+Após subir os containers, abra o Grafana e acesse:
+
+**Dashboards → Order Service → Order Service - Health, Containers and HTTP Traffic**
+
+Esse dashboard já traz:
+- saúde dos componentes (Order Service, Prometheus, coletor de containers)
+- quantidade de chamadas HTTP por endpoint e por status de retorno
+- taxa de erro HTTP (4xx/5xx)
+- latência p95 por endpoint
+- uso de CPU e memória por container
+- reinícios de containers (última 1h)
+
 **Histórico de Versões:**
 
 - **Versão 1.0.0 (12-06-2026):** Fase 01 Implementada.
@@ -121,3 +155,4 @@ docker compose ps
 - **Versão 1.0.10 (17-06-2026):** Teste de swagger e JWT com Wiremock.
 - **Versão 1.0.11 (18-06-2026):** Correção de erro 401 JWT e adição de utilitários de geração de tokens.
 - **Versão 1.0.12 (27-06-2026):** Teste de integração com JWT e Wiremock e documentação.
+- **Versão 1.1.0 (28-06-2026):** Observabilidade OK.
